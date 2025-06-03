@@ -12,14 +12,31 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { name, price, quantity, userId} = req.body;
-  db.query('INSERT INTO cart_items (name, price, quantity,user_id) VALUES (?, ?, ?,?)',
-    [name, price, quantity, userId],
-    (err, result) => {
+  const { name, price, quantity, userId, productId } = req.body;
+
+  db.query(
+    'SELECT * FROM cart_items WHERE name = ? AND user_id = ?',
+    [name, userId],
+    (err, results) => {
       if (err) return res.status(500).send(err);
-      res.json({ id: result.insertId, name, price, quantity ,userId});
-    });
+
+      if (results.length > 0) {
+        return res.status(400).json({ message: 'Product already exists in the cart.' });
+      } else {
+        db.query(
+          'INSERT INTO cart_items (name, price, quantity, user_id, product_id) VALUES (?, ?, ?, ?, ?)',
+          [name, price, quantity, userId, productId],
+          (err, result) => {
+            if (err) return res.status(500).send(err);
+            res.json({ id: result.insertId, name, price, quantity, userId, productId });
+          }
+        );
+      }
+    }
+  );
 });
+
+
 
 router.put('/:id', (req, res) => {
   const { name, price, quantity, userId } = req.body;

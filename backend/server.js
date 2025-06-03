@@ -12,6 +12,8 @@ app.use(cors({
 app.use(express.json());
 app.use(bodyParser.json());
 const cartRoutes = require('./routes/cart');
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin',adminRoutes);
 app.use('/api/cart',cartRoutes);
 app.use((err, req, res, next) => {
   console.error('Server error:', err);

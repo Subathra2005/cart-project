@@ -13,6 +13,7 @@ class Navbar extends React.Component {
 
           {/* Show Logout button if user is logged in */}
           {userId && (
+            <>
             <button 
               className="btn btn-outline-light ms-auto"
               onClick={onLogout}
@@ -20,6 +21,7 @@ class Navbar extends React.Component {
             >
               Logout
             </button>
+            </>
           )}
         </div>
       </nav>

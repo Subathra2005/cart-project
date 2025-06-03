@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+
 const Login = ({ onLogin, onSwitchToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -20,6 +20,7 @@ const Login = ({ onLogin, onSwitchToSignup }) => {
       alert(err.response?.data?.message || 'Login failed');
     }
   };
+
 
   return (
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
