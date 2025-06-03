@@ -55,36 +55,34 @@ export default function AdminProductList() {
       });
   };
 
-  return (
-    <div>
-      <h1>Admin Page</h1>
-      <AddItem addItem={addItem} />
+ return (
+  <div className="container mt-4">
+    <h1 className="mb-4 text-center">Admin Page</h1>
+    <AddItem addItem={addItem} />
 
+    <div className="row">
       {adminProductList.length > 0 ? (
         adminProductList.map((product, i) => (
-          <div key={i} className="row mt-3 align-items-center">
-            {/* Product name and price */}
-            <div className="col-md-6">
-              <h2>
-                {product.name}
-                <span className="badge text-bg-secondary ms-5">
-                  $ {product.price}
-                </span>
-              </h2>
-            </div>
-
-            {/* Quantity and Remove Button */}
-            <div className="col-md-6 d-flex justify-content-between align-items-center">
-              <h4 className="mb-0">Quantity: {product.quantity}</h4>
-              <button className="btn btn-danger" onClick={() => removeItem(i)}>
-                Remove
-              </button>
+          <div key={i} className="col-md-4 mb-4">
+            <div className="card text-center shadow">
+              <div className="card-body">
+                <h5 className="card-title">{product.name}</h5>
+                <h6 className="card-subtitle mb-2 text-muted">
+                  Price: ${product.price}
+                </h6>
+                <p className="card-text">Quantity: {product.quantity}</p>
+                <button className="btn btn-danger" onClick={() => removeItem(i)}>
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
         ))
       ) : (
-        <p>No products found.</p>
+        <p className="text-center mt-4">No products found.</p>
       )}
     </div>
-  );
+  </div>
+);
+
 }

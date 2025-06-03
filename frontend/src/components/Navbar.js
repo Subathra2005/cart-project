@@ -1,32 +1,30 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 
-class Navbar extends React.Component {
-  render() {
-    const { userId, onLogout } = this.props;
+const Navbar = ({ userId, role, onLogout }) => {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4 shadow mb-3">
+      <div className="container-fluid d-flex justify-content-between align-items-center">
+        <Link className="navbar-brand text-white" to="/">
+          E-Cart
+        </Link>
 
-    return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            E-cart
-          </a>
-
-          {/* Show Logout button if user is logged in */}
-          {userId && (
-            <>
-            <button 
-              className="btn btn-outline-light ms-auto"
-              onClick={onLogout}
-              type="button"
-            >
+        {userId && role === "buyer" && (
+          <div className="d-flex align-items-center gap-3">
+            <Link className="nav-link text-white" to="/products">
+              Products
+            </Link>
+            <Link className="nav-link text-white" to="/cart">
+              Cart
+            </Link>
+            
+          </div>
+        )}
+        <button className="btn btn-outline-light" onClick={onLogout}>
               Logout
-            </button>
-            </>
-          )}
-        </div>
-      </nav>
-    );
-  }
-}
+        </button>
+      </div>
+    </nav>
+  );
+};
 
 export default Navbar;

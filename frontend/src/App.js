@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import AdminProductList from "./components/AdminProductList";
 import Products from "./components/Products"; // Import Products component
+import {Routes,Route,Navigate} from "react-router-dom";
 
 function App() {
   // Initialize from localStorage (only once)
@@ -50,30 +51,27 @@ function App() {
   };
 
   return (
-    <>
-      <Navbar userId={userId} onLogout={handleLogout} />
-      <div className="container">
-        {!userId ? (
-          showLogin ? (
-            <Login onLogin={setUserId} onSwitchToSignup={() => setShowLogin(false)} />
-          ) : (
-            <Signup onSwitchToLogin={() => setShowLogin(true)} />
-          )
-        ) : role==='buyer'?(
-          <>
-            <ProductList/>
-            <Products userId={userId} />
-            
-          
-          </>
+  <>
+    <Navbar userId={userId} role={role} onLogout={handleLogout} />
+    <div className="container">
+      {!userId ? (
+        showLogin ? (
+          <Login onLogin={setUserId} onSwitchToSignup={() => setShowLogin(false)} />
         ) : (
-          <>
-          <AdminProductList/>
-          </>
-        )}
-      </div>
-    </>
-  );
+          <Signup onSwitchToLogin={() => setShowLogin(true)} />
+        )
+      ) : role === "buyer" ? (
+        <Routes>
+          <Route path="/" element={<Navigate to="/products" />} />
+          <Route path="/products" element={<Products userId={userId} />} />
+          <Route path="/cart" element={<ProductList />} />
+        </Routes>
+      ) : (
+        <AdminProductList />
+      )}
+    </div>
+  </>
+);
 }
 
 export default App;

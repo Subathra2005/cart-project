@@ -35,6 +35,23 @@ export default function ProductList() {
     return 0;
   }
 };
+const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const fetchUserEmail = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/api/cart/email`, {
+          params: { userId },
+        });
+        setUserEmail(response.data.email); 
+      } catch (err) {
+        console.error('Failed to fetch user email:', err);
+      }
+    };
+
+    if (userId) fetchUserEmail();
+  }, [userId]);
+
 
   const incrementQuantity = async (index) => {
   if (!userId) return;
@@ -148,24 +165,24 @@ export default function ProductList() {
   };
 
   const Product = ({ product, index }) => (
-    <div className="row mt-3">
-      <div className="col-5">
-        <h2>
-          {product.name}
-          <span className="badge text-bg-secondary ms-3">
-            $ {product.price}
-          </span>
-        </h2>
-      </div>
-      <div className="col-3">
-        <div className="btn-group" role="group">
+  <div className="col-md-4 mb-4">
+    <div className="card text-center shadow">
+      <div className="card-body">
+        <h5 className="card-title">{product.name}</h5>
+        <h6 className="card-subtitle mb-2 text-muted">
+          Price: ${product.price}
+        </h6>
+
+        <div className="d-flex justify-content-center align-items-center gap-2 mb-3">
           <button
             className="btn btn-danger"
             onClick={() => decrementQuantity(index)}
           >
             -
           </button>
-          <button className="btn btn-warning">{product.quantity}</button>
+          <span className="btn btn-warning disabled">
+            {product.quantity}
+          </span>
           <button
             className="btn btn-success"
             onClick={() => incrementQuantity(index)}
@@ -173,16 +190,21 @@ export default function ProductList() {
             +
           </button>
         </div>
+
+        <p className="card-text fw-bold">
+          Total: ${product.quantity * product.price}
+        </p>
+
+        <button
+          className="btn btn-outline-danger"
+          onClick={() => removeItem(index)}
+        >
+          Remove
+        </button>
       </div>
-      <div className="col-2">{product.quantity * product.price}</div>
-      <button
-        className="col-2 btn btn-danger"
-        onClick={() => removeItem(index)}
-      >
-        Remove
-      </button>
     </div>
-  );
+  </div>
+);
 
   return (
     <div className="container mt-4">
@@ -195,7 +217,7 @@ export default function ProductList() {
       ) : (
         <h2>No products exist in the cart</h2>
       )}
-      <Footer totalAmount={totalAmount} resetQuantity={resetQuantity}/>
+    <Footer userId={userId} email={userEmail} totalAmount={totalAmount} resetQuantity={resetQuantity} />
     </div>
   );
 }
