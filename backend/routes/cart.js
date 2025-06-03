@@ -11,14 +11,40 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/email', (req, res) => {
+  const { userId } = req.query;
+
+  db.query('SELECT email FROM users WHERE id = ?', [userId], (err, results) => {
+    if (err) return res.status(500).send(err);
+    if (results.length === 0) return res.status(404).send('User not found');
+
+    res.json(results[0]); // { email: "user@example.com" }
+  });
+});
+
 router.post('/', (req, res) => {
-  const { name, price, quantity, userId} = req.body;
-  db.query('INSERT INTO cart_items (name, price, quantity,user_id) VALUES (?, ?, ?,?)',
-    [name, price, quantity, userId],
-    (err, result) => {
+  const { name, price, quantity, userId, productId } = req.body;
+
+  db.query(
+    'SELECT * FROM cart_items WHERE name = ? AND user_id = ?',
+    [name, userId],
+    (err, results) => {
       if (err) return res.status(500).send(err);
-      res.json({ id: result.insertId, name, price, quantity ,userId});
-    });
+
+      if (results.length > 0) {
+        return res.status(400).json({ message: 'Product already exists in the cart.' });
+      } else {
+        db.query(
+          'INSERT INTO cart_items (name, price, quantity, user_id, product_id) VALUES (?, ?, ?, ?, ?)',
+          [name, price, quantity, userId, productId],
+          (err, result) => {
+            if (err) return res.status(500).send(err);
+            res.json({ id: result.insertId, name, price, quantity, userId, productId });
+          }
+        );
+      }
+    }
+  );
 });
 
 router.put('/:id', (req, res) => {
@@ -41,7 +67,6 @@ router.put('/:id', (req, res) => {
     }
   );
 });
-
 
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
@@ -101,7 +126,72 @@ router.post('/login', async (req, res) => {
     }
   });
 });
+router.post('/checkout', async (req, res) => {
+  const { userId, email } = req.body;
 
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required.' });
+  }
 
+  db.query('SELECT * FROM cart_items WHERE user_id = ?', [userId], async (err, cartItems) => {
+    if (err) return res.status(500).send(err);
+    if (cartItems.length === 0) return res.status(400).json({ message: 'Cart is empty.' });
 
+    let totalAmount = 0;
+    const errors = [];
+
+    // Step 1: Check stock and update product quantities
+    for (const item of cartItems) {
+      totalAmount += item.quantity * item.price;
+
+      const [productResult] = await db.promise().query(
+        'SELECT quantity FROM products WHERE id = ?', [item.product_id]
+      );
+
+      const productStock = productResult[0]?.quantity ?? 0;
+
+      if (productStock < item.quantity) {
+        errors.push(`Not enough stock for ${item.name}`);
+        continue;
+      }
+
+      await db.promise().query(
+        'UPDATE products SET quantity = quantity - ? WHERE id = ?',
+        [item.quantity, item.product_id]
+      );
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({ message: 'Some items could not be purchased', errors });
+    }
+
+    // Step 2: Send email
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port:465,
+      secure: true, // true for 465, false for other ports
+      service: 'gmail', // Use Gmail service
+      auth: {
+        user: 'subathrar2005@gmail.com', // Use environment vars in production
+        pass: 'oufkctkysezfxyqq'
+      }
+    });
+    console.log(cartItems);
+    const itemsList = cartItems.map(item => `${item.name} (${item.price}) x${item.quantity}`).join('\n');
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required.' });
+    }
+    await transporter.sendMail({
+      from: 'subathrar2005@gmail.com',
+      to: email,
+      subject: 'Purchase Confirmation',
+      text: `Thank you for your purchase!\n\nItems:\n${itemsList}\n\nTotal: $${totalAmount}`
+    });
+    // Step 3: Clear cart
+    await db.promise().query('DELETE FROM cart_items WHERE user_id = ?', [userId]);
+    
+    res.json({ success: true, message: 'Purchase complete. Email sent.' });
+  });
+});
 module.exports = router;
