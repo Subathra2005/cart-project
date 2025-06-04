@@ -6,7 +6,7 @@ import ProductList from "./components/ProductList";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import AdminProductList from "./components/AdminProductList";
-import Products from "./components/Products"; // Import Products component
+import Products from "./components/Products"; 
 import {Routes,Route,Navigate} from "react-router-dom";
 
 function App() {

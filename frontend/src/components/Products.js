@@ -19,8 +19,6 @@ const Product = ({ product, onAddToCart }) => (
   </div>
 );
 
-
-
 // Add product to cart via API
 const addProductToCart = (product, userId) => {
   return axios.post('http://localhost:5001/api/cart', {
