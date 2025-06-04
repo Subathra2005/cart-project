@@ -210,6 +210,7 @@ const [userEmail, setUserEmail] = useState('');
     <div className="container mt-4">
       <h1>Cart</h1>
       <br />
+      <div className="row">
       {productList.length > 0 ? (
         productList.map((product, index) => (
           <Product key={product.id} product={product} index={index} />
@@ -217,6 +218,7 @@ const [userEmail, setUserEmail] = useState('');
       ) : (
         <h2>No products exist in the cart</h2>
       )}
+      </div>
     <Footer userId={userId} email={userEmail} totalAmount={totalAmount} resetQuantity={resetQuantity} />
     </div>
   );
