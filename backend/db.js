@@ -1,8 +1,9 @@
 const mysql = require('mysql2');
+require('dotenv').config();
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'Subathra$2005',
+    password: process.env.DB_PASSWORD,
     database: 'cartdb'
 
 });
