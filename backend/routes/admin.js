@@ -57,6 +57,31 @@ router.delete('/:id', (req, res) => {
     res.json({ success: true, message: 'Product deleted successfully' });
   }
   );
+
 }
 );
+router.put("/edit", (req, res) => {
+  const { id, name, price, quantity } = req.body;
+
+  if (!id || !name || price === undefined || quantity === undefined) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  const query = "UPDATE products SET name = ?, price = ?, quantity = ? WHERE id = ?";
+
+  db.query(query, [name, price, quantity, id], (err, result) => {
+    if (err) {
+      console.error("Error updating product:", err);
+      return res.status(500).json({ error: "Failed to update product." });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Product not found." });
+    }
+
+    res.json({ id, name, price, quantity });
+  });
+});
+
+module.exports = router;
 module.exports = router;
