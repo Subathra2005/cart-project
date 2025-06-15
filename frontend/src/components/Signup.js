@@ -4,11 +4,12 @@ import axios from 'axios';
 const Signup = ({ onSwitchToLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [address, setAddress] = useState('');
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5001/api/cart/signup', { email, password });
+      const res = await axios.post('http://localhost:5001/api/cart/signup', { email, password,address });
       if (res.data && res.data.success) {
         alert('Signup successful. Please login.');
         onSwitchToLogin();
@@ -43,6 +44,15 @@ const Signup = ({ onSwitchToLogin }) => {
               className="form-control" 
               value={password} 
               onChange={e => setPassword(e.target.value)} 
+              required 
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Address</label>
+            <textarea
+              className="form-control" 
+              value={address} 
+              onChange={e => setAddress(e.target.value)} 
               required 
             />
           </div>

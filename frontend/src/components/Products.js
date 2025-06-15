@@ -6,7 +6,7 @@ const Product = ({ product, onAddToCart }) => (
   <div className="col-md-4 mb-4">
     <div className="card text-center" style={{ width: '18rem', margin: '0 auto' }}>
       <div className="card-body">
-        <h5 className="card-title">{product.name}</h5>
+        <h5 className="card-title"><span className="notranslate">{product.name}</span></h5>
         <p className="card-text">Price: ${product.price}</p>
         <button
           onClick={() => onAddToCart(product)}

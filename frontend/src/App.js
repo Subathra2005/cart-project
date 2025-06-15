@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import ProductList from "./components/ProductList";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import AdminProductList from "./components/AdminProductList";
-import Products from "./components/Products"; 
-import {Routes,Route,Navigate} from "react-router-dom";
+import Orders from "./components/Orders"; // 👈 make sure you created this file
+import Products from "./components/Products";
 
 function App() {
-  // Initialize from localStorage (only once)
   const [userId, setUserId] = useState(() => {
     return localStorage.getItem("userId") || null;
   });
@@ -18,8 +18,7 @@ function App() {
   const [productList, setProductList] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [showLogin, setShowLogin] = useState(true);
-
-  // Sync userId changes to localStorage
+  const [role, setRole] = useState("buyer");
 
   useEffect(() => {
     const findRole = () => {
@@ -40,38 +39,42 @@ function App() {
       localStorage.removeItem("userId");
     }
   }, [userId]);
-  const [role, setRole] = useState("buyer");
 
-  // Logout: clear userId from state and localStorage
   const handleLogout = () => {
     setUserId(null);
     setProductList([]);
     setTotalAmount(0);
-    // localStorage is cleared automatically by useEffect on userId change
   };
 
   return (
-  <>
-    <Navbar userId={userId} role={role} onLogout={handleLogout} />
-    <div className="container">
-      {!userId ? (
-        showLogin ? (
-          <Login onLogin={setUserId} onSwitchToSignup={() => setShowLogin(false)} />
+    <>
+      <Navbar userId={userId} role={role} onLogout={handleLogout} />
+      <div className="container">
+        {!userId ? (
+          showLogin ? (
+            <Login
+              onLogin={setUserId}
+              onSwitchToSignup={() => setShowLogin(false)}
+            />
+          ) : (
+            <Signup onSwitchToLogin={() => setShowLogin(true)} />
+          )
+        ) : role === "buyer" ? (
+          <Routes>
+            <Route path="/" element={<Navigate to="/products" />} />
+            <Route path="/products" element={<Products userId={userId} />} />
+            <Route path="/cart" element={<ProductList />} />
+          </Routes>
         ) : (
-          <Signup onSwitchToLogin={() => setShowLogin(true)} />
-        )
-      ) : role === "buyer" ? (
-        <Routes>
-          <Route path="/" element={<Navigate to="/products" />} />
-          <Route path="/products" element={<Products userId={userId} />} />
-          <Route path="/cart" element={<ProductList />} />
-        </Routes>
-      ) : (
-        <AdminProductList />
-      )}
-    </div>
-  </>
-);
+          <Routes>
+            <Route path="/" element={<Navigate to="/admin/products" />} />
+            <Route path="/admin/products" element={<AdminProductList />} />
+            <Route path="/admin/orders" element={<Orders />} />
+          </Routes>
+        )}
+      </div>
+    </>
+  );
 }
 
 export default App;

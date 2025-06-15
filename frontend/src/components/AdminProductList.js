@@ -91,7 +91,7 @@ export default function AdminProductList() {
 
  return (
     <div className="container mt-4">
-      <h1 className="mb-4 text-center">Admin Page</h1>
+      <h1 className="mb-4 text-center">Manage Products</h1>
       <AddItem addItem={addItem} />
 
       <div className="row">
@@ -132,7 +132,7 @@ export default function AdminProductList() {
                     </>
                   ) : (
                     <>
-                      <h5 className="card-title">{product.name}</h5>
+                      <h5 className="card-title"><span className="notranslate">{product.name}</span></h5>
                       <h6 className="card-subtitle mb-2 text-muted">
                         Price: ${product.price}
                       </h6>

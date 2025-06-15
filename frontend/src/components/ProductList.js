@@ -168,7 +168,7 @@ const [userEmail, setUserEmail] = useState('');
   <div className="col-md-4 mb-4">
     <div className="card text-center shadow">
       <div className="card-body">
-        <h5 className="card-title">{product.name}</h5>
+        <h5 className="card-title"><span className="notranslate">{product.name}</span></h5>
         <h6 className="card-subtitle mb-2 text-muted">
           Price: ${product.price}
         </h6>
