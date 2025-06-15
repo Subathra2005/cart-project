@@ -8,20 +8,38 @@ const Navbar = ({ userId, role, onLogout }) => {
           E-Cart
         </Link>
 
-        {userId && role === "buyer" && (
+        <div id="google_translate_element" />
+
+        {userId && (
           <div className="d-flex align-items-center gap-3">
-            <Link className="nav-link text-white" to="/products">
-              Products
-            </Link>
-            <Link className="nav-link text-white" to="/cart">
-              Cart
-            </Link>
-            
+            {role === "buyer" && (
+              <>
+                <Link className="nav-link text-white" to="/products">
+                  Products
+                </Link>
+                <Link className="nav-link text-white" to="/cart">
+                  Cart
+                </Link>
+              </>
+            )}
+            {role === "admin" && (
+              <>
+                <Link className="nav-link text-white" to="/admin/products">
+                  Manage Products
+                </Link>
+                <Link className="nav-link text-white" to="/admin/orders">
+                  Orders
+                </Link>
+              </>
+            )}
           </div>
         )}
-        <button className="btn btn-outline-light" onClick={onLogout}>
-              Logout
-        </button>
+
+        {userId && (
+          <button className="btn btn-outline-light" onClick={onLogout}>
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );
