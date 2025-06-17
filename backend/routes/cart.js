@@ -144,7 +144,7 @@ router.post("/login", async (req, res) => {
 
     const match = await bcrypt.compare(password, results[0].password);
     if (match) {
-      return res.json({ success: true, userId: results[0].id });
+      return res.json({ success: true, userId: results[0].id, role: results[0].role });
     } else {
       return res
         .status(401)

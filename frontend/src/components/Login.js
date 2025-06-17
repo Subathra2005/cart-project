@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 
 
 const Login = ({ onLogin, onSwitchToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post('http://localhost:5001/api/cart/login', { email, password });
       if (res.data.success) {
         alert('Login successful!');
-        onLogin(res.data.userId);
+        const { userId, role } = res.data;
+        onLogin(userId);
       } else {
         alert(res.data.message || 'Login failed');
       }
